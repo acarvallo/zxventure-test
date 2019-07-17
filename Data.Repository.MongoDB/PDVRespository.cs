@@ -75,7 +75,7 @@ namespace Data.Repository.MongoDB
             var filterInAreas = filterBuiler.GeoIntersects(p => p.coverageArea, geo);
             var filterNear = filterBuiler.Near(p => p.address, geo);
 
-            filterBuiler.And(filterInAreas, filterNear);
+           var filter= filterBuiler.And(filterInAreas, filterNear);
 
             var collection = Context.GetCollection<PDVEntity>(TypeName);
             var indexKey = new IndexKeysDefinitionBuilder<PDVEntity>().Geo2DSphere(p => p.address);
@@ -83,7 +83,7 @@ namespace Data.Repository.MongoDB
 
             collection.Indexes.CreateOne(index);
 
-            var list = await Context.GetCollection<PDVEntity>(TypeName).FindAsync(filterInAreas);
+            var list = await Context.GetCollection<PDVEntity>(TypeName).FindAsync(filter);
 
             return list.FirstOrDefault();
         }
